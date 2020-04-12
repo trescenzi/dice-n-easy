@@ -1,8 +1,9 @@
 # dice-n-easy
 
-An incredibly simple ruby discord die rolling bot. Sidekick, while wonderful, is
-slow sometimes and since it doesn't seem to be open source dice-beta is built to
-be a super minimal die roller, largely for use with 5e and other d20 systems.
+An incredibly simple ruby discord die rolling bot. Others, while most are solid,
+can be slow if they aren't self hosted, or are simply overly complicated.
+`dice-n-easy` is built to be super simple to host, have a small footprint, but
+still be customizable and handle most complex die rolling.
 
 ## Commands
 
