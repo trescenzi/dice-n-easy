@@ -7,7 +7,7 @@ footprint, while still being customizable and handling most complex die rolls.
 
 ## Commands
 
-`dice-n-easy` uses /syntruth/Dice-Bag for all its die rolling. Some common examples below:
+`dice-n-easy` uses [syntruth/Dice-Bag](/github.com/syntruth/Dice-Bag) for all its die rolling. Some common examples below:
 - Advantage: `/r 2d20k1+5`
 - Disadvantage: `/r 2d20d1+5`
 - Reroll 1s: `/r 1d6 r1`
