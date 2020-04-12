@@ -1,1 +1,1 @@
-web: bundle exec ruby dice-n-easy.rb
+worker: bundle exec ruby dice-n-easy.rb
