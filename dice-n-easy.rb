@@ -75,7 +75,7 @@ if REDIS_HOST
       roll_dice(dice_string)
       key = "#{user}:#{macro_name}"
       redis.set(key, dice_string)
-      event.respond "#{user} added macro #{input.split[1]} as #{dice_string}. Use is with #{PREFIX}#{USE_MACRO_COMMAND} #{input.split[1]}"
+      event.respond "#{user} added macro #{input.split[1]} as #{dice_string}. Use with #{PREFIX}#{USE_MACRO_COMMAND} #{input.split[1]}"
     rescue
       puts "Add macro failed #{input}"
       event.respond "#{user} oops! #{input} isn't a macro. Add macros look like: #{PREFIX}#{ADD_MACRO_COMMAND} <macro name> <dice to roll>. Please make sure the dice command is valid and there are no spaces in the macro name."
