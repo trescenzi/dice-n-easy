@@ -5,7 +5,9 @@ can be slow if they aren't self hosted, or are simply overly complicated.
 `dice-n-easy` is built to be super simple to host and have a small
 footprint, while still being customizable and handling most complex die rolls.
 
-**To host on Heroku checkout the [heroku branch](//github.com/trescenzi/dice-n-easy/tree/heroku)**
+This branch is built to be able to be hosted easily on Heroku. A free tier app
+paired with a free redis addon enables all of the features of `dice-n-easy`.
+Just fork it and tell Heroku to deploy from this branch.
 
 ## Commands
 
@@ -23,8 +25,8 @@ footprint, while still being customizable and handling most complex die rolls.
 do care about nicknames. Users can have the same macro names so long as they
 aren't nicknamed the same thing. In order to use macros you need to attach a
 redis addon. `dice-n-easy` is currently written to support the Heroku Redis
-addon and handles connecting to it automatically if `REDIS_URL` is an
-environment variable.
+addon and handles connecting to it automatically with the `REDIS_URL`
+environment variable provided by the addon.
 
 #### Adding Macros
 
