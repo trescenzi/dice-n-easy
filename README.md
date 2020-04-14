@@ -44,7 +44,7 @@ Examples:
 
 ## Serving
 
-`dice-n-easy`'s Heroku branch is serup to be by Heroku. 
+`dice-n-easy`'s Heroku branch is setup to be served by Heroku. 
 All that's required is to set the token environment variable and make sure you
 have a worker dyno turned on. The following variables are available for
 additional customization:
