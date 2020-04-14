@@ -5,6 +5,8 @@ can be slow if they aren't self hosted, or are simply overly complicated.
 `dice-n-easy` is built to be super simple to host and have a small
 footprint, while still being customizable and handling most complex die rolls.
 
+**To host on Heroku checkout the [heroku branch](/tree/heroku)**
+
 ## Commands
 
 ### Rolling Dice
