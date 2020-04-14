@@ -29,8 +29,7 @@ end
 Dotenv.load
 PREFIX = ENV['DICENEASY_PREFIX'] || '/'
 ROLLCOMMAND = ENV['DICENEASY_ROLLCOMMAND'] || 'r'
-REDIS_HOST = ENV['DICENEASY_REDISHOST']
-REDIS_PASSWORD = ENV['DICENEASY_REDISPASSWORD']
+REDIS_URL = ENV['REDIS_URL']
 ADD_MACRO_COMMAND = ENV['DICENEASY_ADDMACROCOMMAND'] || 'am'
 USE_MACRO_COMMAND = ENV['DICENEASY_USEMACROCOMMAND'] || 'm'
 TOKEN = ENV['DICENEASY_TOKEN']
@@ -39,8 +38,7 @@ puts "Using roll-command: %s" % ROLLCOMMAND
 puts "Example roll: #{PREFIX}#{ROLLCOMMAND} 1d6+3"
 puts "Example add macro: #{PREFIX}#{ADD_MACRO_COMMAND} attack 1d20+4"
 puts "Example use macro: #{PREFIX}#{USE_MACRO_COMMAND} attack"
-puts "Using redis #{REDIS_HOST} for macros" if REDIS_HOST
-puts "Using a password for redis" if REDIS_HOST and REDIS_PASSWORD
+puts "Using redis for macros" if REDIS_URL
 puts "Using token: %s" % TOKEN.slice(-5,5)
 
 @bot = Discordrb::Commands::CommandBot.new token: ENV['DICENEASY_TOKEN'], compress_mode: :large, ignore_bots: true, fancy_log: true, prefix: PREFIX
@@ -61,9 +59,9 @@ puts "Using token: %s" % TOKEN.slice(-5,5)
     end
 end
 
-if REDIS_HOST
+if REDIS_URL
   require 'redis'
-  redis = Redis.new(host: REDIS_HOST, password: REDIS_PASSWORD)
+  redis = Redis.new(url: REDIS_URL);
 
   @bot.command ADD_MACRO_COMMAND.to_sym do |event|
     puts "ADD MACRO: #{event.content}"
