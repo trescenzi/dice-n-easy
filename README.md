@@ -1,11 +1,13 @@
-# dice-n-easy
+# dice-n-easy -- For Heroku
 
 An incredibly simple ruby discord die rolling bot. Others, while most are solid,
 can be slow if they aren't self hosted, or are simply overly complicated.
 `dice-n-easy` is built to be super simple to host and have a small
 footprint, while still being customizable and handling most complex die rolls.
 
-**To host on Heroku checkout the [heroku branch](//github.com/trescenzi/dice-n-easy/tree/heroku)**
+This branch is built to be able to be hosted easily on Heroku. A free tier app
+paired with a free redis addon enables all of the features of `dice-n-easy`.
+Just fork it and tell Heroku to deploy from this branch.
 
 ## Commands
 
@@ -21,10 +23,10 @@ footprint, while still being customizable and handling most complex die rolls.
 
 `dice-n-easy` supports simple custom macros. Macros are user specific, and they
 do care about nicknames. Users can have the same macro names so long as they
-aren't nicknamed the same thing. In order to use macros you need to have a redis
-db hooked up via environment variables as described below. If you don't provide
-a redis db that's ok, you can still use the rolling features just not the
-macros.
+aren't nicknamed the same thing. In order to use macros you need to attach a
+redis addon. `dice-n-easy` is currently written to support the Heroku Redis
+addon and handles connecting to it automatically with the `REDIS_URL`
+environment variable provided by the addon.
 
 #### Adding Macros
 
@@ -42,10 +44,10 @@ Examples:
 
 ## Serving
 
-`dice-n-easy` is intended to be really easy to serve via something like Heroku or
-on a personal server. All that's required is to set the token environment
-variable. However if you'd like you can customize what the bot looks for in
-commands. The following variables are available:
+`dice-n-easy`'s Heroku branch is setup to be served by Heroku. 
+All that's required is to set the token environment variable and make sure you
+have a worker dyno turned on. The following variables are available for
+additional customization:
 - `DICENEASY_TOKEN`: The bot's token
 - `DICENEASY_PREFIX`: The prefix for commands. Defaults to `/`
 - `DICENEASY_ROLLCOMMAND`: The command for rolling dice. Defaults to `r`
