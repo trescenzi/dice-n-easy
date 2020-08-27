@@ -9,14 +9,14 @@ def roll_dice(dice_string)
   puts "Rolling #{dice_string}"
   DiceBag::Roll.new(dice_string).result()
 end
-def format_dice_result(result, user)
+def format_embed(embed, result, user)
+  embed.title = "#{user} rolled #{result}"
   reason = ""
   result.each do |section|
     reason = "%s %sd%s:%s".% [reason, section.count, section.sides, section.tally] if defined? section.count
   end
-  response = "#{user} Rolled: `#{result}` \n Breakdown: #{reason}"
-  puts "Formatted dice response #{response}"
-  response 
+  embed.description = reason
+  embed.color = 4289797
 end
 
 Dotenv.load
@@ -45,7 +45,8 @@ puts "Using token: %s" % TOKEN.slice(-5,5)
     
     dice_string = input.delete_prefix(DICE_PREFIX).strip
     begin
-      event.respond format_dice_result(roll_dice(dice_string), user)
+      result = roll_dice(dice_string)
+      event.send_embed do |embed| format_embed(embed, result, user) end
     rescue
       puts "Dice roll #{dice_string} failed"
       event.respond "#{user} oops! #{dice_string} doesn't compute. Please try again. PM me `help` for help."
@@ -87,7 +88,8 @@ if REDIS_HOST || REDIS_URL
     begin
       key = "#{user}:#{macro_name}"
       dice_string = redis.get(key)
-      event.respond format_dice_result(roll_dice(dice_string), user)
+      result = roll_dice(dice_string)
+      event.send_embed do |embed| format_embed(embed, result, user) end
     rescue
       puts "Use macro failed #{input}"
       event.respond "#{user} oops! #{input} isn't a saved macro. Remember macros are user and nickname specific."
