@@ -2,6 +2,20 @@ require 'discordrb'
 require 'dicebag'
 require 'dotenv'
 
+Dotenv.load
+PREFIX = ENV['DICENEASY_PREFIX'] || '/'
+ROLLCOMMAND = ENV['DICENEASY_ROLLCOMMAND'] || 'r'
+REDIS_HOST = ENV['DICENEASY_REDISHOST']
+REDIS_PASSWORD = ENV['DICENEASY_REDISPASSWORD']
+REDIS_URL = ENV['REDIS_URL']
+ADD_MACRO_COMMAND = ENV['DICENEASY_ADDMACROCOMMAND'] || 'am'
+USE_MACRO_COMMAND = ENV['DICENEASY_USEMACROCOMMAND'] || 'm'
+TOKEN = ENV['DICENEASY_TOKEN']
+DICE_PREFIX = "#{PREFIX}#{ROLLCOMMAND}"
+puts "Using redis #{REDIS_HOST if REDIS_HOST} for macros" if REDIS_HOST || REDIS_URL
+puts "Using a password for redis" if REDIS_HOST and REDIS_PASSWORD
+puts "Using token: %s" % TOKEN.slice(-5,5)
+
 def get_user_or_nick(event)
   user = event.user.nick != nil ? event.user.nick : event.user.name
 end
@@ -18,22 +32,20 @@ def format_embed(embed, result, user)
   embed.description = reason
   embed.color = 4289797
 end
-
-Dotenv.load
-PREFIX = ENV['DICENEASY_PREFIX'] || '/'
-ROLLCOMMAND = ENV['DICENEASY_ROLLCOMMAND'] || 'r'
-REDIS_HOST = ENV['DICENEASY_REDISHOST']
-REDIS_PASSWORD = ENV['DICENEASY_REDISPASSWORD']
-REDIS_URL = ENV['REDIS_URL']
-ADD_MACRO_COMMAND = ENV['DICENEASY_ADDMACROCOMMAND'] || 'am'
-USE_MACRO_COMMAND = ENV['DICENEASY_USEMACROCOMMAND'] || 'm'
-TOKEN = ENV['DICENEASY_TOKEN']
-DICE_PREFIX = "#{PREFIX}#{ROLLCOMMAND}"
-HELP_MESSAGE = "I'm your friendly neighborhood dice bot here to help\nCommon dice rolls look like:\n- Advantage: `#{DICE_PREFIX} 2d20k1+5`\n- Disadvantage: `#{DICE_PREFIX} 2d20kl1+5`\n- Reroll 1s: `#{DICE_PREFIX} 1d6 r1`\n- Explode 5s and 6s: `#{DICE_PREFIX} 1d6 e5`\nAdd Macros with `#{PREFIX}#{ADD_MACRO_COMMAND}`\nUse Macros with `#{PREFIX}#{USE_MACRO_COMMAND}`\nExample add macro: `#{PREFIX}#{ADD_MACRO_COMMAND} attack 1d20+4n`\nExample use macro: `#{PREFIX}#{USE_MACRO_COMMAND} attack`"
-puts HELP_MESSAGE
-puts "Using redis #{REDIS_HOST if REDIS_HOST} for macros" if REDIS_HOST || REDIS_URL
-puts "Using a password for redis" if REDIS_HOST and REDIS_PASSWORD
-puts "Using token: %s" % TOKEN.slice(-5,5)
+def embed_help_message(embed)
+  embed.title = "I'm your friendly neighborhood dice bot here to help!"
+  embed.description = "The following are some common dice rolls"
+  advantage = Discordrb::Webhooks::EmbedField.new(name: "Advantage", value: "#{DICE_PREFIX} 2d20k1+5")
+  embed.fields = [
+    Discordrb::Webhooks::EmbedField.new(name: "Advantage", value: "#{DICE_PREFIX} 2d20k1+5"),
+    Discordrb::Webhooks::EmbedField.new(name: "Disadvantage", value: "#{DICE_PREFIX} 2d20kl1+5"),
+    Discordrb::Webhooks::EmbedField.new(name: "Reroll 1s", value: "#{DICE_PREFIX} 1d6 r1"),
+    Discordrb::Webhooks::EmbedField.new(name: "Explode 5s and 6s", value: "#{DICE_PREFIX} 1d6 e5"),
+    Discordrb::Webhooks::EmbedField.new(name: "Adding a macro", value: "#{PREFIX}#{ADD_MACRO_COMMAND} attack 1d20+4"),
+    Discordrb::Webhooks::EmbedField.new(name: "Use a macro", value: "#{PREFIX}#{USE_MACRO_COMMAND} attack"),
+  ]
+  embed.color = 4289797
+end
 
 @bot = Discordrb::Commands::CommandBot.new token: ENV['DICENEASY_TOKEN'], compress_mode: :large, ignore_bots: true, fancy_log: true, prefix: PREFIX
 @bot.gateway.check_heartbeat_acks = false
@@ -56,7 +68,7 @@ end
 @bot.pm do |event|
   puts "PM: #{event.content}"
   next if !event.content.downcase.include? 'help'
-  event.respond HELP_MESSAGE
+  event.send_embed do |embed| embed_help_message embed end
 end
 
 if REDIS_HOST || REDIS_URL
