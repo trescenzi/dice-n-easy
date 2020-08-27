@@ -5,7 +5,7 @@ can be slow if they aren't self hosted, or are simply overly complicated.
 `dice-n-easy` is built to be super simple to host and have a small
 footprint, while still being customizable and handling most complex die rolls.
 
-The heroky branch is built to be able to be hosted easily on Heroku. A free tier app
+The heroku branch is built to be able to be hosted easily on Heroku. A free tier app
 paired with a free redis addon enables all of the features of `dice-n-easy`.
 Just fork it and tell Heroku to deploy from that branch.
 
