@@ -23,7 +23,7 @@ def roll_dice(dice_string)
   puts "Rolling #{dice_string}"
   DiceBag::Roll.new(dice_string).result()
 end
-def format_embed(embed, result, user, macro, macro_string)
+def format_embed(embed, result, user, macro = nil, macro_string = nil)
   embed.title = "#{user} rolled #{result}"
   reason = ""
   result.each do |section|
