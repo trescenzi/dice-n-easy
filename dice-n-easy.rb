@@ -23,7 +23,7 @@ def roll_dice(dice_string)
   puts "Rolling #{dice_string}"
   DiceBag::Roll.new(dice_string).result()
 end
-def format_embed(embed, result, user)
+def format_embed(embed, result, user, macro = nil, macro_string = nil)
   embed.title = "#{user} rolled #{result}"
   reason = ""
   result.each do |section|
@@ -31,11 +31,16 @@ def format_embed(embed, result, user)
   end
   embed.description = reason
   embed.color = 4289797
+  if macro && macro_string
+    embed.fields = [
+      Discordrb::Webhooks::EmbedField.new(name: macro, value: macro_string),
+    ]
+  end
+  embed
 end
 def embed_help_message(embed)
   embed.title = "I'm your friendly neighborhood dice bot here to help!"
   embed.description = "The following are some common dice rolls"
-  advantage = Discordrb::Webhooks::EmbedField.new(name: "Advantage", value: "#{DICE_PREFIX} 2d20k1+5")
   embed.fields = [
     Discordrb::Webhooks::EmbedField.new(name: "Advantage", value: "#{DICE_PREFIX} 2d20k1+5"),
     Discordrb::Webhooks::EmbedField.new(name: "Disadvantage", value: "#{DICE_PREFIX} 2d20kl1+5"),
@@ -101,7 +106,7 @@ if REDIS_HOST || REDIS_URL
       key = "#{user}:#{macro_name}"
       dice_string = redis.get(key)
       result = roll_dice(dice_string)
-      event.send_embed do |embed| format_embed(embed, result, user) end
+      event.send_embed do |embed| format_embed(embed, result, user, macro_name, dice_string) end
     rescue
       puts "Use macro failed #{input}"
       event.respond "#{user} oops! #{input} isn't a saved macro. Remember macros are user and nickname specific."
