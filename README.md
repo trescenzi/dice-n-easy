@@ -1,13 +1,13 @@
-# dice-n-easy -- For Heroku
+# dice-n-easy
 
 An incredibly simple ruby discord die rolling bot. Others, while most are solid,
 can be slow if they aren't self hosted, or are simply overly complicated.
 `dice-n-easy` is built to be super simple to host and have a small
 footprint, while still being customizable and handling most complex die rolls.
 
-This branch is built to be able to be hosted easily on Heroku. A free tier app
+The heroku branch is built to be able to be hosted easily on Heroku. A free tier app
 paired with a free redis addon enables all of the features of `dice-n-easy`.
-Just fork it and tell Heroku to deploy from this branch.
+Just fork it and tell Heroku to deploy from that branch.
 
 ## Commands
 
@@ -53,9 +53,7 @@ additional customization:
 - `DICENEASY_ROLLCOMMAND`: The command for rolling dice. Defaults to `r`
 - `DICENEASY_ADDMACROCOMMAND`: The command for adding macros. Defaults to `am`
 - `DICENEASY_USEMACROCOMMAND`: The command for using macros. Defaults to `m`
-- Redis:
+- Redis: Used for macros. It not setup macros won't work everything else will though.
   - `DICENEASY_REDISHOST`: The hostname of the redis db for storing macros.
-    Defaults to `nil`. If not provided, macros won't work. Everything else will
-    though.
   - `DICENEASY_REDISPASSWORD`: The password for the redis db.
   - `REDIS_URL`: If provided will be used instead of the host + password.
