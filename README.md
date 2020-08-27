@@ -1,4 +1,4 @@
-# dice-n-easy -- For Heroku
+# dice-n-easy
 
 An incredibly simple ruby discord die rolling bot. Others, while most are solid,
 can be slow if they aren't self hosted, or are simply overly complicated.
