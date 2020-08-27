@@ -54,7 +54,7 @@ end
 
 @bot.pm do |event|
   puts "PM: #{event.content}"
-  next if !event.content.include? 'help'
+  next if !event.content.downcase.include? 'help'
   event.respond HELP_MESSAGE
 end
 
