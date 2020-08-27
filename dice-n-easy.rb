@@ -2,20 +2,13 @@ require 'discordrb'
 require 'dicebag'
 require 'dotenv'
 
-def check_user_or_nick(event)
-  if event.user.nick != nil
-    event.user.nick
-  else
-    event.user.name
-  end
+def get_user_or_nick(event)
+  user = event.user.nick != nil ? event.user.nick : event.user.name
 end
-
 def roll_dice(dice_string)
   puts "Rolling #{dice_string}"
-  dice   = DiceBag::Roll.new(dice_string)
-  dice.result()
+  DiceBag::Roll.new(dice_string).result()
 end
-
 def format_dice_result(result, user)
   reason = ""
   result.each do |section|
@@ -29,16 +22,17 @@ end
 Dotenv.load
 PREFIX = ENV['DICENEASY_PREFIX'] || '/'
 ROLLCOMMAND = ENV['DICENEASY_ROLLCOMMAND'] || 'r'
+REDIS_HOST = ENV['DICENEASY_REDISHOST']
+REDIS_PASSWORD = ENV['DICENEASY_REDISPASSWORD']
 REDIS_URL = ENV['REDIS_URL']
 ADD_MACRO_COMMAND = ENV['DICENEASY_ADDMACROCOMMAND'] || 'am'
 USE_MACRO_COMMAND = ENV['DICENEASY_USEMACROCOMMAND'] || 'm'
 TOKEN = ENV['DICENEASY_TOKEN']
-puts "Using command prefix: %s" % PREFIX
-puts "Using roll-command: %s" % ROLLCOMMAND
-puts "Example roll: #{PREFIX}#{ROLLCOMMAND} 1d6+3"
-puts "Example add macro: #{PREFIX}#{ADD_MACRO_COMMAND} attack 1d20+4"
-puts "Example use macro: #{PREFIX}#{USE_MACRO_COMMAND} attack"
-puts "Using redis for macros" if REDIS_URL
+DICE_PREFIX = "#{PREFIX}#{ROLLCOMMAND}"
+HELP_MESSAGE = "I'm your friendly neighborhood dice bot here to help\nCommon dice rolls look like:\n- Advantage: `#{DICE_PREFIX} 2d20k1+5`\n- Disadvantage: `#{DICE_PREFIX} 2d20d1+5`\n- Reroll 1s: `#{DICE_PREFIX} 1d6 r1`\n- Explode 5s and 6s: `#{DICE_PREFIX} 1d6 e5`\nAdd Macros with `#{PREFIX}#{ADD_MACRO_COMMAND}`\nUse Macros with `#{PREFIX}#{USE_MACRO_COMMAND}`\nExample add macro: `#{PREFIX}#{ADD_MACRO_COMMAND} attack 1d20+4n`\nExample use macro: `#{PREFIX}#{USE_MACRO_COMMAND} attack`"
+puts HELP_MESSAGE
+puts "Using redis #{REDIS_HOST if REDIS_HOST} for macros" if REDIS_HOST || REDIS_URL
+puts "Using a password for redis" if REDIS_HOST and REDIS_PASSWORD
 puts "Using token: %s" % TOKEN.slice(-5,5)
 
 @bot = Discordrb::Commands::CommandBot.new token: ENV['DICENEASY_TOKEN'], compress_mode: :large, ignore_bots: true, fancy_log: true, prefix: PREFIX
@@ -47,28 +41,33 @@ puts "Using token: %s" % TOKEN.slice(-5,5)
 @bot.command ROLLCOMMAND.to_sym do |event|
     puts "ROLLING: #{event.content}"
     input = event.content.strip
-    user = check_user_or_nick(event)
-    dice_prefix = "#{PREFIX}#{ROLLCOMMAND}"
+    user = get_user_or_nick(event)
     
-    dice_string = input.delete_prefix(dice_prefix).strip
+    dice_string = input.delete_prefix(DICE_PREFIX).strip
     begin
       event.respond format_dice_result(roll_dice(dice_string), user)
     rescue
       puts "Dice roll #{dice_string} failed"
-      event.respond "#{user} oops! #{dice_string} doesn't compute. Please try again. Common dice rolls look like:\n- Advantage: `#{dice_prefix} 2d20k1+5`\n- Disadvantage: `#{dice_prefix} 2d20d1+5`\n- Reroll 1s: `#{dice_prefix} 1d6 r1`\n- Explode 5s and 6s: `#{dice_prefix} 1d6 e5`"
+      event.respond "#{user} oops! #{dice_string} doesn't compute. Please try again. PM me `help` for help."
     end
 end
 
-if REDIS_URL
+@bot.pm do |event|
+  puts "PM: #{event.content}"
+  next if !event.content.include? 'help'
+  event.respond HELP_MESSAGE
+end
+
+if REDIS_HOST || REDIS_URL
   require 'redis'
-  redis = Redis.new(url: REDIS_URL);
+  redis = REDIS_HOST ? Redis.new(host: REDIS_HOST, password: REDIS_PASSWORD) : Redis.new(url: REDIS_URL)
 
   @bot.command ADD_MACRO_COMMAND.to_sym do |event|
     puts "ADD MACRO: #{event.content}"
     input = event.content.strip
     macro_name = input.split[1].upcase
     dice_string = input.split.drop(2).join(' ')
-    user = check_user_or_nick(event)
+    user = get_user_or_nick(event)
     begin
       roll_dice(dice_string)
       key = "#{user}:#{macro_name}"
@@ -84,7 +83,7 @@ if REDIS_URL
     puts "USE MACRO:#{event.content}"
     input = event.content.strip
     macro_name = input.split[1].upcase
-    user = check_user_or_nick(event)
+    user = get_user_or_nick(event)
     begin
       key = "#{user}:#{macro_name}"
       dice_string = redis.get(key)

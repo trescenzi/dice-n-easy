@@ -53,3 +53,9 @@ additional customization:
 - `DICENEASY_ROLLCOMMAND`: The command for rolling dice. Defaults to `r`
 - `DICENEASY_ADDMACROCOMMAND`: The command for adding macros. Defaults to `am`
 - `DICENEASY_USEMACROCOMMAND`: The command for using macros. Defaults to `m`
+- Redis:
+  - `DICENEASY_REDISHOST`: The hostname of the redis db for storing macros.
+    Defaults to `nil`. If not provided, macros won't work. Everything else will
+    though.
+  - `DICENEASY_REDISPASSWORD`: The password for the redis db.
+  - `REDIS_URL`: If provided will be used instead of the host + password.
