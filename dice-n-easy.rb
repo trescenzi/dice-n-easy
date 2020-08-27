@@ -29,7 +29,7 @@ ADD_MACRO_COMMAND = ENV['DICENEASY_ADDMACROCOMMAND'] || 'am'
 USE_MACRO_COMMAND = ENV['DICENEASY_USEMACROCOMMAND'] || 'm'
 TOKEN = ENV['DICENEASY_TOKEN']
 DICE_PREFIX = "#{PREFIX}#{ROLLCOMMAND}"
-HELP_MESSAGE = "I'm your friendly neighborhood dice bot here to help\nCommon dice rolls look like:\n- Advantage: `#{DICE_PREFIX} 2d20k1+5`\n- Disadvantage: `#{DICE_PREFIX} 2d20d1+5`\n- Reroll 1s: `#{DICE_PREFIX} 1d6 r1`\n- Explode 5s and 6s: `#{DICE_PREFIX} 1d6 e5`\nAdd Macros with `#{PREFIX}#{ADD_MACRO_COMMAND}`\nUse Macros with `#{PREFIX}#{USE_MACRO_COMMAND}`\nExample add macro: `#{PREFIX}#{ADD_MACRO_COMMAND} attack 1d20+4n`\nExample use macro: `#{PREFIX}#{USE_MACRO_COMMAND} attack`"
+HELP_MESSAGE = "I'm your friendly neighborhood dice bot here to help\nCommon dice rolls look like:\n- Advantage: `#{DICE_PREFIX} 2d20k1+5`\n- Disadvantage: `#{DICE_PREFIX} 2d20kl1+5`\n- Reroll 1s: `#{DICE_PREFIX} 1d6 r1`\n- Explode 5s and 6s: `#{DICE_PREFIX} 1d6 e5`\nAdd Macros with `#{PREFIX}#{ADD_MACRO_COMMAND}`\nUse Macros with `#{PREFIX}#{USE_MACRO_COMMAND}`\nExample add macro: `#{PREFIX}#{ADD_MACRO_COMMAND} attack 1d20+4n`\nExample use macro: `#{PREFIX}#{USE_MACRO_COMMAND} attack`"
 puts HELP_MESSAGE
 puts "Using redis #{REDIS_HOST if REDIS_HOST} for macros" if REDIS_HOST || REDIS_URL
 puts "Using a password for redis" if REDIS_HOST and REDIS_PASSWORD
